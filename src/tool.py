@@ -1,3 +1,10 @@
+import base64
+import io
+from openai import OpenAI
+import tempfile
+from pathlib import Path
+
+client = OpenAI()
 
 book_summaries_dict = {
     "The Hobbit": (
@@ -32,3 +39,55 @@ def get_summary_by_title(title: str) -> str:
             return book_summaries_dict[key]
 
     return f"Nu am găsit rezumat pentru titlul «{title}» în baza de date."
+
+
+
+def generate_book_cover(title: str):
+    try:
+        response = client.responses.create(
+            model="gpt-4.1-mini",  
+            input=f"Generate an image of a book cover for the novel titled '{title}', in a literary style.",
+            tools=[{"type": "image_generation"}],
+        )
+
+        image_data = [
+            output.result
+            for output in response.output
+            if output.type == "image_generation_call"
+        ]
+
+        if image_data:
+            image_base64 = image_data[0]
+
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as f:
+                f.write(base64.b64decode(image_base64))
+                tmp_path = f.name
+
+            return tmp_path
+
+        else:
+            print("Nu s-a generat imaginea.")
+            return None
+
+    except Exception as e:
+        print(" Eroare generare imagine")
+        return None
+    
+def generate_speech(text: str):
+    try:
+        # Fișier temporar pentru salvare
+        tmp_path = Path(tempfile.NamedTemporaryFile(delete=False, suffix=".mp3").name)
+
+        with client.audio.speech.with_streaming_response.create(
+            model="gpt-4o-mini-tts",  # sau gpt-4o când va fi full
+            voice="nova",  # coral, nova, shimmer, alloy...
+            input=text,
+            instructions="Vorbește clar și plăcut, cu o tonalitate prietenoasă."
+        ) as response:
+            response.stream_to_file(tmp_path)
+
+        return str(tmp_path)
+
+    except Exception as e:
+        print("❌ Eroare generare speech:", e)
+        return None
