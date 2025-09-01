@@ -79,8 +79,8 @@ def generate_speech(text: str):
         tmp_path = Path(tempfile.NamedTemporaryFile(delete=False, suffix=".mp3").name)
 
         with client.audio.speech.with_streaming_response.create(
-            model="gpt-4o-mini-tts",  # sau gpt-4o când va fi full
-            voice="nova",  # coral, nova, shimmer, alloy...
+            model="gpt-4o-mini-tts", 
+            voice="nova",  
             input=text,
             instructions="Vorbește clar și plăcut, cu o tonalitate prietenoasă."
         ) as response:
@@ -89,5 +89,5 @@ def generate_speech(text: str):
         return str(tmp_path)
 
     except Exception as e:
-        print("❌ Eroare generare speech:", e)
+        print("Eroare generare speech:", e)
         return None
