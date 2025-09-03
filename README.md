@@ -11,7 +11,7 @@ An intelligent book recommendation app that uses OpenAI's LLMs for smart suggest
 -  **Text-to-Speech**: Uses GPT-4o streaming voice generation
 -  **Book Cover Generator**: DALL·E-style prompts for covers
 -  **Moderation Layer**: API + fallback LLM-based filtering
--  **Modern UI** with Gradio (or Flask optionally)
+-  **Modern UI** with Gradio 
 -  **Context-Aware Recommendations** by theme/topic/title
 -  Optional CLI, REST API, or Flask server
 ---
